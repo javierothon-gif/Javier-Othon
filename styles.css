@@ -14,6 +14,8 @@
 
 * { box-sizing: border-box; }
 
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   background: var(--bg);
@@ -106,6 +108,12 @@ main { max-width: 1400px; margin: 0 auto; padding: 24px; }
   border-radius: 8px;
   padding: 8px 0;
   cursor: crosshair;
+  /* En iPad/celular el dedo horizontal marca el loop en lugar de mover la página;
+     el scroll vertical sigue funcionando. */
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .transport {
@@ -205,4 +213,10 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 #waveform ::part(region-handle) {
   border-color: #3fc1ff !important;
   border-width: 3px !important;
+}
+
+/* Con dedo: bordes más anchos para poder agarrarlos. */
+@media (pointer: coarse) {
+  #waveform ::part(region-handle) { width: 22px !important; }
+  .btn-sm { padding: 8px 14px; }
 }
