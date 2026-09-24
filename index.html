@@ -27,11 +27,45 @@
       </div>
 
       <div id="waveform" class="waveform"></div>
+      <p id="loop-hint" class="hint">Arrastra sobre la waveform para marcar la sección que quieres sacar de oído.</p>
 
       <div class="transport">
         <button id="btn-back" class="btn" title="Regresar 5 s (←)">⏪ 5s</button>
         <button id="btn-play" class="btn btn-primary btn-play" title="Play / Pausa (Espacio)">▶</button>
         <button id="btn-fwd" class="btn" title="Adelantar 5 s (→)">5s ⏩</button>
+      </div>
+
+      <div class="panels">
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Loop</h2>
+            <button id="btn-loop" class="btn btn-toggle" aria-pressed="false" disabled title="Activar / desactivar loop (L)">Loop OFF</button>
+          </div>
+          <div class="loop-edges">
+            <div class="edge">
+              <span class="label">Inicio</span>
+              <button class="btn btn-sm" data-nudge="start" data-delta="-0.1" disabled>−0.1</button>
+              <span id="loop-start" class="value">–</span>
+              <button class="btn btn-sm" data-nudge="start" data-delta="0.1" disabled>+0.1</button>
+            </div>
+            <div class="edge">
+              <span class="label">Fin</span>
+              <button class="btn btn-sm" data-nudge="end" data-delta="-0.1" disabled>−0.1</button>
+              <span id="loop-end" class="value">–</span>
+              <button class="btn btn-sm" data-nudge="end" data-delta="0.1" disabled>+0.1</button>
+            </div>
+          </div>
+          <button id="btn-clear-loop" class="btn btn-ghost btn-sm" disabled>Borrar sección</button>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <h2>Zoom</h2>
+            <span id="zoom-value" class="value">1×</span>
+          </div>
+          <input id="zoom" type="range" min="0" max="200" step="1" value="0" />
+          <p class="muted small">Acerca la waveform para marcar el loop con precisión en pasajes rápidos.</p>
+        </div>
       </div>
     </section>
   </main>
