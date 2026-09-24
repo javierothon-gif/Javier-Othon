@@ -26,6 +26,7 @@ const ui = {
   presets: document.querySelectorAll('[data-speed]'),
   zoom: $('zoom'),
   zoomValue: $('zoom-value'),
+  error: $('error'),
 };
 
 const REGION_COLOR = 'rgba(63, 193, 255, 0.2)';
@@ -63,11 +64,17 @@ function formatTime(sec) {
   return `${m}:${s}`;
 }
 
+function showError(msg) {
+  ui.error.textContent = msg;
+  ui.error.hidden = !msg;
+}
+
 function loadFile(file) {
   if (!file || !(file.type.startsWith('audio/') || /\.(mp3|wav)$/i.test(file.name))) {
-    alert('Ese archivo no parece audio. Sube un mp3 o wav.');
+    showError('Ese archivo no parece audio. Sube un mp3 o wav.');
     return;
   }
+  showError('');
   if (objectUrl) URL.revokeObjectURL(objectUrl);
   objectUrl = URL.createObjectURL(file);
 
@@ -113,7 +120,7 @@ ws.on('timeupdate', (t) => {
 });
 ws.on('play', () => (ui.play.textContent = '❚❚'));
 ws.on('pause', () => (ui.play.textContent = '▶'));
-ws.on('error', (err) => alert(`No pude leer el audio: ${err.message || err}`));
+ws.on('error', (err) => showError(`No pude leer el audio (${err.message || err}). Prueba con otro mp3 o wav.`));
 
 // --- Loop ---
 function setLoopOn(on) {

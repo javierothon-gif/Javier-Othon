@@ -1,4 +1,5 @@
 :root {
+  color-scheme: dark;
   --bg: #0f1115;
   --panel: #181b22;
   --panel-2: #20242d;
@@ -42,6 +43,15 @@ body {
 main { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
 .muted { color: var(--muted); }
+
+.error {
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: rgba(255, 90, 90, 0.12);
+  border: 1px solid rgba(255, 90, 90, 0.5);
+  color: #ffb3b3;
+}
 
 .dropzone {
   border: 2px dashed var(--panel-2);
