@@ -4,7 +4,8 @@ import RegionsPlugin from './vendor/regions.esm.js';
 const $ = (id) => document.getElementById(id);
 
 const ui = {
-  fileInput: $('file-input'),
+  fileInputs: document.querySelectorAll('.file-input'),
+  loading: $('loading'),
   dropzone: $('dropzone'),
   player: $('player'),
   trackName: $('track-name'),
@@ -83,11 +84,17 @@ function loadFile(file) {
   ui.player.hidden = false;
   clearLoop();
   ui.zoom.value = 0;
-  ws.load(objectUrl);
+  ui.loading.hidden = false;
+  ws.load(objectUrl).catch(() => {}); // el error se muestra en el evento 'error'
 }
 
 // --- Carga de archivo: botón + drag & drop sobre toda la página ---
-ui.fileInput.addEventListener('change', (e) => loadFile(e.target.files[0]));
+ui.fileInputs.forEach((input) =>
+  input.addEventListener('change', () => {
+    loadFile(input.files[0]);
+    input.value = ''; // permite volver a elegir el mismo archivo
+  })
+);
 
 ['dragenter', 'dragover'].forEach((ev) =>
   window.addEventListener(ev, (e) => {
@@ -101,7 +108,7 @@ ui.fileInput.addEventListener('change', (e) => loadFile(e.target.files[0]));
     document.body.classList.remove('dragover');
   })
 );
-window.addEventListener('drop', (e) => loadFile(e.dataTransfer.files[0]));
+window.addEventListener('drop', (e) => e.dataTransfer.files[0] && loadFile(e.dataTransfer.files[0]));
 
 // --- Transporte ---
 ui.play.addEventListener('click', () => ws.playPause());
@@ -109,6 +116,7 @@ ui.back.addEventListener('click', () => ws.setTime(Math.max(0, ws.getCurrentTime
 ui.fwd.addEventListener('click', () => ws.setTime(Math.min(ws.getDuration(), ws.getCurrentTime() + 5)));
 
 ws.on('ready', (dur) => {
+  ui.loading.hidden = true;
   ui.duration.textContent = formatTime(dur);
   ui.currentTime.textContent = formatTime(0);
   // El elemento de audio reinicia su velocidad al cargar otra canción: la reaplicamos.
@@ -120,7 +128,10 @@ ws.on('timeupdate', (t) => {
 });
 ws.on('play', () => (ui.play.textContent = '❚❚'));
 ws.on('pause', () => (ui.play.textContent = '▶'));
-ws.on('error', (err) => showError(`No pude leer el audio (${err.message || err}). Prueba con otro mp3 o wav.`));
+ws.on('error', (err) => {
+  ui.loading.hidden = true;
+  showError(`No pude leer el audio (${err.message || err}). Prueba con otro mp3 o wav.`);
+});
 
 // --- Loop ---
 function setLoopOn(on) {

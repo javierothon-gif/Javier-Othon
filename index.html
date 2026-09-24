@@ -10,20 +10,24 @@
 <body>
   <header class="topbar">
     <h1>Ear Trainer <span class="tag">MVP</span></h1>
-    <label class="btn btn-ghost" for="file-input">Subir audio</label>
-    <input id="file-input" type="file" accept="audio/*,.mp3,.wav" hidden />
+    <label class="btn btn-ghost file-btn">
+      Subir audio
+      <input id="file-input" class="file-input" type="file" accept="audio/*,.mp3,.wav" aria-label="Subir audio" />
+    </label>
   </header>
 
   <main>
     <p id="error" class="error" role="alert" hidden></p>
-    <section id="dropzone" class="dropzone">
-      <p><strong>Arrastra aquí tu canción</strong> (mp3 / wav)</p>
-      <p class="muted">o usa el botón “Subir audio”. Todo corre en tu navegador, nada se sube a ningún servidor.</p>
-    </section>
+    <label id="dropzone" class="dropzone">
+      <p><strong>Toca aquí para elegir tu canción</strong> (mp3 / wav)</p>
+      <p class="muted">o arrástrala a este recuadro. Todo corre en tu navegador, nada se sube a ningún servidor.</p>
+      <input id="file-input-drop" class="file-input" type="file" accept="audio/*,.mp3,.wav" aria-label="Elegir canción" />
+    </label>
 
     <section id="player" class="player" hidden>
       <div class="track-info">
         <span id="track-name" class="track-name"></span>
+        <span id="loading" class="loading" hidden>Cargando audio…</span>
         <span class="time"><span id="current-time">0:00.0</span> / <span id="duration">0:00.0</span></span>
       </div>
 
