@@ -1,0 +1,114 @@
+:root {
+  --bg: #0f1115;
+  --panel: #181b22;
+  --panel-2: #20242d;
+  --text: #e8eaf0;
+  --muted: #8a90a0;
+  --accent: #ff8a1f;
+  --accent-soft: rgba(255, 138, 31, 0.22);
+  --wave: #4a5163;
+  --progress: #ff8a1f;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--panel-2);
+}
+
+.topbar h1 { margin: 0; font-size: 18px; letter-spacing: 0.3px; }
+
+.tag {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  vertical-align: middle;
+}
+
+main { max-width: 1400px; margin: 0 auto; padding: 24px; }
+
+.muted { color: var(--muted); }
+
+.dropzone {
+  border: 2px dashed var(--panel-2);
+  border-radius: var(--radius);
+  padding: 64px 24px;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.dropzone.dragover, body.dragover .dropzone {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.player {
+  background: var(--panel);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.track-info {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.track-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.time { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+
+.waveform {
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 8px 0;
+  cursor: crosshair;
+}
+
+.transport {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--panel-2);
+  background: var(--panel-2);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.btn:hover { border-color: var(--muted); }
+
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #111; font-weight: 700; }
+.btn-primary:hover { filter: brightness(1.08); border-color: var(--accent); }
+
+.btn-ghost { background: transparent; }
+
+.btn-play { width: 64px; height: 64px; border-radius: 50%; font-size: 22px; }
+
+@media (max-width: 640px) {
+  main { padding: 16px; }
+  .topbar { padding: 12px 16px; }
+}

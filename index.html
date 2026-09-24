@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ear Trainer · MVP</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎸</text></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Ear Trainer <span class="tag">MVP</span></h1>
+    <label class="btn btn-ghost" for="file-input">Subir audio</label>
+    <input id="file-input" type="file" accept="audio/*,.mp3,.wav" hidden />
+  </header>
+
+  <main>
+    <section id="dropzone" class="dropzone">
+      <p><strong>Arrastra aquí tu canción</strong> (mp3 / wav)</p>
+      <p class="muted">o usa el botón “Subir audio”. Todo corre en tu navegador, nada se sube a ningún servidor.</p>
+    </section>
+
+    <section id="player" class="player" hidden>
+      <div class="track-info">
+        <span id="track-name" class="track-name"></span>
+        <span class="time"><span id="current-time">0:00.0</span> / <span id="duration">0:00.0</span></span>
+      </div>
+
+      <div id="waveform" class="waveform"></div>
+
+      <div class="transport">
+        <button id="btn-back" class="btn" title="Regresar 5 s (←)">⏪ 5s</button>
+        <button id="btn-play" class="btn btn-primary btn-play" title="Play / Pausa (Espacio)">▶</button>
+        <button id="btn-fwd" class="btn" title="Adelantar 5 s (→)">5s ⏩</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
