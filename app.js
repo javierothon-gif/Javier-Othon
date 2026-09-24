@@ -19,6 +19,11 @@ const ui = {
   loopEnd: $('loop-end'),
   loopHint: $('loop-hint'),
   nudges: document.querySelectorAll('[data-nudge]'),
+  speed: $('speed'),
+  speedValue: $('speed-value'),
+  speedDown: $('speed-down'),
+  speedUp: $('speed-up'),
+  presets: document.querySelectorAll('[data-speed]'),
   zoom: $('zoom'),
   zoomValue: $('zoom-value'),
 };
@@ -99,6 +104,8 @@ ui.fwd.addEventListener('click', () => ws.setTime(Math.min(ws.getDuration(), ws.
 ws.on('ready', (dur) => {
   ui.duration.textContent = formatTime(dur);
   ui.currentTime.textContent = formatTime(0);
+  // El elemento de audio reinicia su velocidad al cargar otra canción: la reaplicamos.
+  setSpeed(Number(ui.speed.value));
 });
 ws.on('timeupdate', (t) => {
   ui.currentTime.textContent = formatTime(t);
@@ -203,6 +210,23 @@ ws.on('play', () => {
   if (t < loopRegion.start || t >= loopRegion.end) ws.setTime(loopRegion.start);
 });
 
+// --- Velocidad (pitch-preserving) ---
+// preservePitch = true usa el time-stretching nativo del navegador:
+// cambia el tempo sin cambiar el tono. Rango 25%–150% (Firefox silencia < 25%).
+function setSpeed(percent) {
+  const p = Math.min(150, Math.max(25, Math.round(percent / 5) * 5));
+  ui.speed.value = p;
+  ui.speedValue.textContent = `${p}%`;
+  ui.presets.forEach((b) => b.classList.toggle('active', Number(b.dataset.speed) === p));
+  ws.setPlaybackRate(p / 100, true);
+}
+
+ui.speed.addEventListener('input', () => setSpeed(Number(ui.speed.value)));
+ui.speedDown.addEventListener('click', () => setSpeed(Number(ui.speed.value) - 5));
+ui.speedUp.addEventListener('click', () => setSpeed(Number(ui.speed.value) + 5));
+ui.presets.forEach((b) => b.addEventListener('click', () => setSpeed(Number(b.dataset.speed))));
+setSpeed(100);
+
 // --- Zoom ---
 ui.zoom.addEventListener('input', () => {
   const pxPerSec = Number(ui.zoom.value);
@@ -223,6 +247,10 @@ window.addEventListener('keydown', (e) => {
     ws.setTime(Math.min(ws.getDuration(), ws.getCurrentTime() + 5));
   } else if (e.code === 'KeyL' && loopRegion) {
     ui.loop.click();
+  } else if (e.code === 'BracketLeft') {
+    setSpeed(Number(ui.speed.value) - 5);
+  } else if (e.code === 'BracketRight') {
+    setSpeed(Number(ui.speed.value) + 5);
   } else if (e.code === 'Escape') {
     clearLoop();
   }
