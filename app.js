@@ -58,6 +58,8 @@ let loopRegion = null;
 let loopOn = false;
 
 let objectUrl = null;
+let current = null; // { file, peaks, duration, usingDataUrl }
+let loadToken = 0;
 
 function formatTime(sec) {
   const m = Math.floor(sec / 60);
@@ -70,23 +72,87 @@ function showError(msg) {
   ui.error.hidden = !msg;
 }
 
-function loadFile(file) {
-  if (!file || !(file.type.startsWith('audio/') || /\.(mp3|wav)$/i.test(file.name))) {
+// Decodificamos el archivo nosotros y le pasamos a wavesurfer la forma de onda
+// ya lista. Así wavesurfer no hace fetch() del archivo, que la página publicada
+// bloquea por seguridad (en Safari sale como "Load failed").
+async function decodeFile(file) {
+  const buffer = await file.arrayBuffer();
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  const ctx = new Ctx();
+  try {
+    return await new Promise((resolve, reject) => {
+      // Safari viejo solo soporta la versión con callbacks.
+      const p = ctx.decodeAudioData(buffer, resolve, reject);
+      if (p && p.then) p.then(resolve, reject);
+    });
+  } finally {
+    ctx.close?.();
+  }
+}
+
+function readAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function loadFile(file) {
+  if (!file || !(file.type.startsWith('audio/') || /\.(mp3|wav|m4a|aac|ogg|flac)$/i.test(file.name))) {
     showError('Ese archivo no parece audio. Sube un mp3 o wav.');
     return;
   }
+  const token = ++loadToken;
   showError('');
-  if (objectUrl) URL.revokeObjectURL(objectUrl);
-  objectUrl = URL.createObjectURL(file);
-
   ui.trackName.textContent = file.name;
   ui.dropzone.hidden = true;
   ui.player.hidden = false;
   clearLoop();
   ui.zoom.value = 0;
   ui.loading.hidden = false;
-  ws.load(objectUrl).catch(() => {}); // el error se muestra en el evento 'error'
+
+  let decoded;
+  try {
+    decoded = await decodeFile(file);
+  } catch (err) {
+    if (token !== loadToken) return;
+    ui.loading.hidden = true;
+    showError(`No pude leer "${file.name}". Prueba con un mp3 o wav.`);
+    return;
+  }
+  if (token !== loadToken) return;
+
+  const peaks = [];
+  for (let i = 0; i < Math.min(2, decoded.numberOfChannels); i++) peaks.push(decoded.getChannelData(i));
+  current = { file, peaks, duration: decoded.duration, usingDataUrl: false };
+
+  if (objectUrl) URL.revokeObjectURL(objectUrl);
+  objectUrl = URL.createObjectURL(file);
+  ws.load(objectUrl, peaks, decoded.duration).catch(() => {});
 }
+
+// Si el reproductor no puede abrir el archivo como blob: (algunos navegadores
+// embebidos lo bloquean), reintentamos con el audio incrustado como data: URL.
+ws.getMediaElement().addEventListener('error', async () => {
+  if (!current || !ws.getMediaElement().src) return;
+  if (current.usingDataUrl) {
+    ui.loading.hidden = true;
+    showError(`No pude reproducir "${current.file.name}". Prueba con un mp3 o wav.`);
+    return;
+  }
+  current.usingDataUrl = true;
+  const token = loadToken;
+  try {
+    const dataUrl = await readAsDataUrl(current.file);
+    if (token !== loadToken) return;
+    ws.load(dataUrl, current.peaks, current.duration).catch(() => {});
+  } catch {
+    ui.loading.hidden = true;
+    showError(`No pude reproducir "${current.file.name}". Prueba con un mp3 o wav.`);
+  }
+});
 
 // --- Carga de archivo: botón + drag & drop sobre toda la página ---
 ui.fileInputs.forEach((input) =>
@@ -129,6 +195,8 @@ ws.on('timeupdate', (t) => {
 ws.on('play', () => (ui.play.textContent = '❚❚'));
 ws.on('pause', () => (ui.play.textContent = '▶'));
 ws.on('error', (err) => {
+  // Los errores del reproductor los maneja el reintento de arriba.
+  if (ws.getMediaElement().error) return;
   ui.loading.hidden = true;
   showError(`No pude leer el audio (${err.message || err}). Prueba con otro mp3 o wav.`);
 });
