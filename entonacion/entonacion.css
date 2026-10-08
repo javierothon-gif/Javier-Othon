@@ -86,3 +86,4 @@
   .ent-card { padding: 16px 14px; }
   .ent-note { font-size: 56px; }
 }
+.ent-sub { font-size: 15px; font-weight: 600; color: var(--muted); }

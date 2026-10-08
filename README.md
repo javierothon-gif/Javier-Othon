@@ -31,7 +31,7 @@ python3 -m http.server 8000
 - `[` / `]`: velocidad −5% / +5%
 - `Esc`: borrar sección
 
-## Módulo Entonación (`#entonacion`)
+## Módulo Tune-Up · Entonación (`#entonacion`)
 
 Afinador de voz para instrumentistas: entrena la salida (cantar lo que escuchas).
 
