@@ -6,17 +6,22 @@
   <title>Ear Trainer · MVP</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎸</text></svg>" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="entonacion/entonacion.css" />
 </head>
 <body>
   <header class="topbar">
     <h1>Ear Trainer <span class="tag">MVP</span></h1>
+    <nav class="tabs" aria-label="Módulos">
+      <a href="#oido" class="tab" data-view="oido">Sacar de oído</a>
+      <a href="#entonacion" class="tab" data-view="entonacion">Entonación</a>
+    </nav>
     <label class="btn btn-ghost file-btn">
       Subir audio
       <input id="file-input" class="file-input" type="file" accept="audio/*,.mp3,.wav" aria-label="Subir audio" />
     </label>
   </header>
 
-  <main>
+  <main id="view-oido" class="view">
     <p id="error" class="error" role="alert" hidden></p>
     <label id="dropzone" class="dropzone">
       <p><strong>Toca aquí para elegir tu canción</strong> (mp3 / wav)</p>
@@ -96,6 +101,70 @@
     </section>
   </main>
 
+  <main id="view-entonacion" class="view ent" hidden>
+    <p id="ent-error" class="error" role="alert" hidden></p>
+
+    <section id="ent-intro" class="ent-card ent-intro">
+      <h2 class="ent-title">Entonación</h2>
+      <p>Tu oído ya reconoce la nota. Ahora entrenamos la salida: escuchas, cantas y ves en tiempo real a cuántos cents quedaste.</p>
+      <p class="ent-warn">🎧 <strong>Usa audífonos</strong> para que la nota de referencia no entre al micrófono.</p>
+      <p class="muted small">La primera vez calibramos tu rango en 20 segundos. Todo corre en tu navegador: tu voz no se graba ni se sube a ningún lado.</p>
+      <button id="ent-start" class="btn btn-primary btn-big">Listo, a entrenar</button>
+    </section>
+
+    <section id="ent-calib" class="ent-card" hidden>
+      <p id="ent-calib-step" class="ent-step"></p>
+      <p id="ent-calib-text" class="ent-lead"></p>
+      <div id="ent-calib-note" class="ent-calib-note" aria-live="polite">–</div>
+      <div class="ent-progress"><div id="ent-calib-bar" class="ent-progress-bar"></div></div>
+      <p id="ent-calib-result" class="ent-lead" hidden></p>
+      <div class="ent-actions">
+        <button id="ent-calib-retry" class="btn" hidden>Repetir calibración</button>
+        <button id="ent-calib-done" class="btn btn-primary" hidden>Empezar</button>
+      </div>
+    </section>
+
+    <section id="ent-train" class="ent-card" hidden>
+      <div class="ent-modes" role="group" aria-label="Modo">
+        <button id="ent-mode-target" class="btn btn-toggle" aria-pressed="true">Nota objetivo</button>
+        <button id="ent-mode-free" class="btn btn-toggle" aria-pressed="false">Libre</button>
+      </div>
+
+      <div id="ent-target" class="ent-target">
+        <span class="muted small">Nota objetivo</span>
+        <span><strong id="ent-target-note">–</strong> <span id="ent-target-solfeo" class="muted"></span></span>
+      </div>
+
+      <div class="ent-readout" aria-live="off">
+        <div class="ent-note"><span id="ent-note">–</span><span id="ent-note-solfeo" class="ent-note-solfeo"></span></div>
+        <div id="ent-cents" class="ent-cents"></div>
+      </div>
+      <div id="ent-meter" class="ent-meter"></div>
+      <p id="ent-hint" class="ent-hint"></p>
+
+      <div class="ent-progress"><div id="ent-hold-bar" class="ent-progress-bar"></div></div>
+      <p id="ent-status" class="ent-status" aria-live="polite"></p>
+
+      <div id="ent-feedback" class="ent-feedback" aria-live="polite" hidden>
+        <p id="ent-feedback-title" class="ent-feedback-title"></p>
+        <p id="ent-feedback-sub" class="ent-feedback-sub"></p>
+      </div>
+
+      <div id="ent-target-controls" class="ent-actions">
+        <button id="ent-play" class="btn">🔊 Repetir</button>
+        <button id="ent-next" class="btn btn-primary">Otra nota →</button>
+      </div>
+
+      <div class="ent-footer">
+        <span id="ent-range" class="muted small"></span>
+        <button id="ent-recalib" class="btn btn-ghost btn-sm">Recalibrar</button>
+      </div>
+      <div class="ent-level" title="Nivel del micrófono"><div id="ent-level"></div></div>
+    </section>
+  </main>
+
+  <script type="module" src="nav.js"></script>
   <script type="module" src="app.js"></script>
+  <script type="module" src="entonacion/entonacion.js"></script>
 </body>
 </html>

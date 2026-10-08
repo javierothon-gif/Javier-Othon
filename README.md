@@ -31,11 +31,26 @@ python3 -m http.server 8000
 - `[` / `]`: velocidad −5% / +5%
 - `Esc`: borrar sección
 
+## Módulo Entonación (`#entonacion`)
+
+Afinador de voz para instrumentistas: entrena la salida (cantar lo que escuchas).
+
+1. Aviso de audífonos → la primera vez calibras tu nota más grave y más aguda cómodas.
+2. **Nota objetivo:** suena una referencia (oscilador), la cantas y se promedian ~2 s de nota sostenida. Botones Repetir / Otra nota.
+3. **Libre:** nota detectada + cents respecto a la más cercana.
+
+- Micrófono con `echoCancellation`, `noiseSuppression` y `autoGainControl` apagados.
+- Tono con YIN (75–1050 Hz), compuerta de volumen, mediana de 7 frames y confirmación de saltos de octava.
+- Cada intento se guarda en `localStorage` (`sonicear.entonacion.v1`): fecha, nota objetivo, cents con signo.
+- El micrófono necesita contexto seguro: `localhost` o `https`. Para probar en el celular usa un túnel https o GitHub Pages.
+
 ## Estructura
 
 - `index.html`: layout
 - `styles.css`: estilos
 - `app.js`: lógica (carga, transporte, loop, velocidad, zoom)
+- `nav.js`: pestañas entre módulos por `#hash` (evento `viewchange`)
+- `entonacion/`: `mic.js`, `pitch.js` (YIN + suavizado), `notes.js`, `reference.js`, `meter.js`, `storage.js`, `entonacion.js` (flujo) y `entonacion.css`
 - `vendor/`: [wavesurfer.js](https://wavesurfer.xyz) v7.12.12 y su plugin de regiones (BSD-3-Clause), incluidos en el repo para no depender de un CDN
 
 ## Notas técnicas

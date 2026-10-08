@@ -220,3 +220,22 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
   #waveform ::part(region-handle) { width: 22px !important; }
   .btn-sm { padding: 8px 14px; }
 }
+
+/* --- Navegación entre módulos --- */
+.topbar { flex-wrap: wrap; gap: 10px 16px; }
+.tabs { display: flex; gap: 4px; background: var(--panel); padding: 4px; border-radius: 10px; }
+.tab {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.tab[aria-current="page"] { background: var(--panel-2); color: var(--accent); }
+body:not([data-view="oido"]) .topbar .file-btn { display: none; }
+
+@media (max-width: 640px) {
+  .tabs { order: 3; width: 100%; }
+  .tab { flex: 1; text-align: center; padding: 10px 8px; }
+}

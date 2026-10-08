@@ -323,7 +323,7 @@ ui.zoom.addEventListener('input', () => {
 
 // --- Atajos de teclado ---
 window.addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT' || ui.player.hidden) return;
+  if (e.target.tagName === 'INPUT' || ui.player.hidden || document.body.dataset.view !== 'oido') return;
   if (e.code === 'Space') {
     e.preventDefault();
     ws.playPause();
@@ -341,3 +341,6 @@ window.addEventListener('keydown', (e) => {
     clearLoop();
   }
 });
+
+// Al cambiar de módulo se pausa la canción.
+window.addEventListener('viewchange', (e) => e.detail !== 'oido' && ws.pause());
